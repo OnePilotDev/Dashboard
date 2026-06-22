@@ -657,18 +657,46 @@
       const urlMap = {};
       tab.bookmarks.forEach(b => { urlMap[b.url.toLowerCase().trim()] = b; });
 
+      // URLs jinko forcefully update karna hai (old → new)
+      const URL_MIGRATIONS = {
+        'https://pilottools.github.io/o2': 'https://onepilottools.com/free-courses/',
+        'https://pilottools.github.io/h2o': 'https://onepilottools.com/software-dashboard/',
+      };
+
+      // Migration: purane URLs ko naye se replace karo
+      tab.bookmarks.forEach(b => {
+        const oldUrl = b.url.trim();
+        for (const [oldPattern, newUrl] of Object.entries(URL_MIGRATIONS)) {
+          if (oldUrl.toLowerCase().startsWith(oldPattern.toLowerCase())) {
+            b.url = newUrl;
+          }
+        }
+      });
+
+      // Maps rebuild karo migration ke baad
+      const nameMap2 = {};
+      tab.bookmarks.forEach(b => { nameMap2[b.name.toLowerCase()] = b; });
+      const urlMap2 = {};
+      tab.bookmarks.forEach(b => { urlMap2[b.url.toLowerCase().trim()] = b; });
+
       defaultList.forEach(def => {
         const defNameKey = def.name.toLowerCase();
         const defUrlKey  = def.url.toLowerCase().trim();
 
-        // Agar URL ya naam se already exist karta hai to chedo mat — user ne edit kiya hoga
-        if (urlMap[defUrlKey] || nameMap[defNameKey]) return;
+        // Agar naam milta hai to URL bhi update karo (default se)
+        if (nameMap2[defNameKey]) {
+          nameMap2[defNameKey].url = def.url;
+          return;
+        }
+
+        // Agar URL se already exist karta hai to skip
+        if (urlMap2[defUrlKey]) return;
 
         // Sirf naya missing card add karo
         const newBm = { id: uid(), name: def.name, url: def.url };
         tab.bookmarks.push(newBm);
-        nameMap[defNameKey] = newBm;
-        urlMap[defUrlKey]   = newBm;
+        nameMap2[defNameKey] = newBm;
+        urlMap2[defUrlKey]   = newBm;
       });
 
       // NOTE: reordering hataya gaya — user ki custom card position preserve hoti hai
