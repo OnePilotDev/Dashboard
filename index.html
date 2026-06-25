@@ -361,6 +361,170 @@
     .cbtn.cclr { background: linear-gradient(135deg, #ef4444, #f87171); color: #fff; }
     .cbtn.cbk { background: linear-gradient(135deg, #f59e0b, #fbbf24); color: #fff; }
     .cbtn.csqrt { background: linear-gradient(135deg, #8b5cf6, #a78bfa); color: #fff; font-size: 0.8rem; }
+
+    /* ===== QUICK NOTES MODAL ===== */
+    .qn-backdrop {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(17,24,39,0.6); backdrop-filter: blur(3px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 1100; padding: 20px;
+    }
+    .qn-backdrop.show { display: flex; }
+    .qn-box {
+      background: var(--bg); border-radius: 20px; max-width: 640px; width: 100%;
+      max-height: 86vh; overflow-y: auto; padding: 28px 30px 30px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+      animation: qnPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+    }
+    @keyframes qnPop { from{opacity:0;transform:scale(0.92) translateY(20px)} to{opacity:1;transform:scale(1) translateY(0)} }
+    .qn-header { display:flex; align-items:center; justify-content:space-between; margin-bottom:18px; }
+    .qn-title { display:flex; align-items:center; gap:10px; font-size:1.5rem; font-weight:700; color: var(--text2); margin:0; }
+    .qn-close { cursor:pointer; color: var(--text3); background: var(--bg3); width:34px; height:34px; border-radius:50%; display:flex; align-items:center; justify-content:center; transition:0.2s; border:none; flex-shrink:0; }
+    .qn-close:hover { background:#ef4444; color:#fff; transform: rotate(90deg); }
+
+    .qn-hint {
+      display:flex; align-items:center; gap:10px;
+      background: var(--bg2); border: 1px solid var(--border);
+      border-radius: 12px; padding: 12px 16px; margin-bottom: 18px;
+      font-size: 0.85rem; font-weight: 600; color: var(--text2);
+    }
+    .qn-hint .material-icons { color:#6366f1; font-size:20px; flex-shrink:0; }
+
+    .qn-textarea {
+      width: 100%; min-height: 110px; max-height: 240px; resize: vertical;
+      border: 1.5px solid var(--input-border); border-radius: 14px;
+      padding: 14px 16px; font-size: 0.95rem; font-family: inherit;
+      outline: none; background: var(--bg2); color: var(--text2);
+      line-height: 1.5; transition: border-color 0.2s;
+    }
+    .qn-textarea:focus { border-color: #6366f1; }
+
+    .qn-save-row { display:flex; justify-content:flex-end; margin: 12px 0 22px; }
+    .qn-save-btn {
+      display:flex; align-items:center; gap:8px;
+      background: linear-gradient(135deg,#6366f1,#818cf8); color:#fff;
+      border:none; padding: 11px 22px; border-radius: 50px;
+      font-weight:700; font-size:0.95rem; cursor:pointer;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.4); transition: 0.2s;
+    }
+    .qn-save-btn:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.5); }
+    .qn-save-btn:active { transform: translateY(0); }
+    .qn-save-btn .material-icons { font-size:18px; }
+
+    .qn-list { display:grid; grid-template-columns: repeat(auto-fill, minmax(180px,1fr)); gap:16px; align-items: stretch; }
+    .qn-card {
+      position: relative;
+      background: var(--bg2);
+      border: 1px solid var(--border);
+      border-radius: 16px;
+      padding: 16px 14px 12px;
+      display:flex; flex-direction:column;
+      height: 100%;
+      transition: transform 0.2s, box-shadow 0.2s, border-color 0.2s;
+      box-shadow: 0 1px 3px rgba(0,0,0,0.04);
+      cursor: grab;
+    }
+    .qn-card::before {
+      content: ''; position:absolute; top:0; left:0; right:0; height: 4px; border-radius: 16px 16px 0 0;
+      background: linear-gradient(90deg,#6366f1,#8b5cf6,#ec4899);
+      opacity: 0.85;
+    }
+    .qn-card:hover { box-shadow: 0 10px 24px rgba(99,102,241,0.16), 0 2px 6px rgba(0,0,0,0.06); transform: translateY(-3px); border-color: rgba(99,102,241,0.35); }
+    .qn-card.qn-dragging { opacity: 0.4; cursor: grabbing; border: 2px dashed #6366f1; }
+    .qn-card.qn-drag-over { border-color: #6366f1; box-shadow: 0 0 0 3px rgba(99,102,241,0.22); }
+
+    .qn-card-handle {
+      position: absolute; top: 8px; right: 8px;
+      color: var(--text3); opacity: 0; transition: opacity 0.15s;
+      cursor: grab; display:flex; align-items:center; justify-content:center;
+      width: 22px; height: 22px;
+    }
+    .qn-card:hover .qn-card-handle { opacity: 0.55; }
+    .qn-card-handle .material-icons { font-size: 18px; pointer-events: none; }
+
+    .qn-card-preview {
+      font-size: 0.85rem; color: var(--text2); font-weight: 500; line-height: 1.45;
+      overflow: hidden; display: -webkit-box; -webkit-line-clamp: 2; -webkit-box-orient: vertical;
+      word-break: break-word; white-space: pre-wrap; margin-bottom: 14px; margin-top: 4px;
+      padding-right: 18px; flex-shrink: 0;
+    }
+    .qn-card-footer {
+      display:flex; flex-direction: column; gap: 8px;
+      padding-top: 10px; border-top: 1px solid var(--border); margin-top: auto;
+    }
+    .qn-card-date { font-size: 0.7rem; color: #6366f1; font-weight:700; white-space:nowrap; letter-spacing: 0.2px; }
+    .qn-card-actions { display:flex; align-items:center; justify-content:flex-end; gap: 4px; }
+    .qn-icon-btn {
+      background: var(--bg3); border: none; cursor:pointer; color: var(--text3);
+      width:30px; height:30px; border-radius:8px; display:flex; align-items:center; justify-content:center;
+      transition:0.15s; padding:0; flex-shrink: 0;
+    }
+    .qn-icon-btn:hover { background: #6366f1; color:#fff; transform: scale(1.08); }
+    .qn-icon-btn.qn-del:hover { background: #ef4444; color:#fff; }
+    .qn-icon-btn .material-icons { font-size:17px; pointer-events:none; }
+    .qn-empty { color: var(--text3); font-size:0.9rem; text-align:center; padding: 28px 0; grid-column: 1/-1; }
+    .qn-empty .material-icons { font-size: 32px; display:block; margin: 0 auto 8px; opacity: 0.4; }
+
+    .qn-list-label {
+      font-size: 0.78rem; font-weight: 700; color: var(--text3); text-transform: uppercase;
+      letter-spacing: 0.5px; margin-bottom: 12px; display:flex; align-items:center; gap:6px;
+    }
+    .qn-list-label .material-icons { font-size: 15px; }
+
+    .qn-toast {
+      position: fixed; bottom: 28px; left: 50%; transform: translateX(-50%) translateY(20px);
+      background: #111827; color:#fff; padding: 10px 20px; border-radius: 50px;
+      font-size: 0.85rem; font-weight: 600; z-index: 1200; opacity:0;
+      transition: opacity 0.25s, transform 0.25s; display:flex; align-items:center; gap:8px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.3); pointer-events:none;
+    }
+    .qn-toast.show { opacity:1; transform: translateX(-50%) translateY(0); }
+
+    /* ===== NOTE EDIT MODAL ===== */
+    .qn-edit-backdrop {
+      position: fixed; top: 0; left: 0; right: 0; bottom: 0;
+      background-color: rgba(17,24,39,0.65); backdrop-filter: blur(4px);
+      display: none; justify-content: center; align-items: center;
+      z-index: 1300; padding: 20px;
+    }
+    .qn-edit-backdrop.show { display: flex; }
+    .qn-edit-box {
+      background: var(--bg); border-radius: 20px; max-width: 560px; width: 100%;
+      padding: 28px 28px 24px;
+      box-shadow: 0 30px 70px rgba(0,0,0,0.35);
+      animation: qnPop 0.3s cubic-bezier(0.34,1.56,0.64,1);
+      display: flex; flex-direction: column; gap: 16px;
+    }
+    .qn-edit-header { display:flex; align-items:center; justify-content:space-between; }
+    .qn-edit-title { display:flex; align-items:center; gap:10px; font-size:1.3rem; font-weight:700; color: var(--text2); margin:0; }
+    .qn-edit-close {
+      cursor:pointer; color: var(--text3); background: var(--bg3);
+      width:34px; height:34px; border-radius:50%; display:flex; align-items:center;
+      justify-content:center; transition:0.2s; border:none; flex-shrink:0;
+    }
+    .qn-edit-close:hover { background:#ef4444; color:#fff; transform: rotate(90deg); }
+    .qn-edit-textarea {
+      width: 100%; min-height: 160px; max-height: 340px; resize: vertical;
+      border: 1.5px solid var(--input-border); border-radius: 14px;
+      padding: 14px 16px; font-size: 0.95rem; font-family: inherit;
+      outline: none; background: var(--bg2); color: var(--text2);
+      line-height: 1.5; transition: border-color 0.2s;
+    }
+    .qn-edit-textarea:focus { border-color: #6366f1; }
+    .qn-edit-footer { display:flex; justify-content:flex-end; gap:10px; }
+    .qn-edit-cancel {
+      padding: 10px 20px; border-radius: 50px; font-size: 0.9rem; font-weight: 600;
+      border: none; cursor: pointer; background: var(--bg3); color: var(--text);
+    }
+    .qn-edit-save {
+      display:flex; align-items:center; gap:7px;
+      background: linear-gradient(135deg,#6366f1,#818cf8); color:#fff;
+      border:none; padding: 10px 22px; border-radius: 50px;
+      font-weight:700; font-size:0.9rem; cursor:pointer;
+      box-shadow: 0 4px 14px rgba(99,102,241,0.4); transition: 0.2s;
+    }
+    .qn-edit-save:hover { transform: translateY(-2px); box-shadow: 0 8px 20px rgba(99,102,241,0.5); }
+    .qn-edit-save .material-icons { font-size:17px; }
   </style>
   </head>
   <body>
@@ -397,9 +561,9 @@
 
           <!-- Quick Notes full width -->
           <div style="display:flex;gap:8px;width:100%;">
-            <a href="https://pilottools.github.io/Quick-Notes/" target="_blank" style="background:linear-gradient(135deg,#10b981,#34d399);color:#fff;border-radius:50px;padding:11px 16px;font-size:0.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,185,129,0.4);white-space:nowrap;width:100%;justify-content:center;text-decoration:none;">
+            <button id="quickNotesOpenBtn" style="background:linear-gradient(135deg,#10b981,#34d399);color:#fff;border-radius:50px;padding:11px 16px;font-size:0.95rem;font-weight:700;cursor:pointer;display:flex;align-items:center;gap:8px;box-shadow:0 4px 14px rgba(16,185,129,0.4);white-space:nowrap;width:100%;justify-content:center;text-decoration:none;border:none;">
               <span style="font-size:20px;">📝</span> Quick Notes
-            </a>
+            </button>
           </div>
 
           <!-- Mode switcher + Calculator FAB side by side -->
@@ -496,6 +660,49 @@
           <button type="submit" style="background:#6366f1">Save</button>
         </div>
       </form>
+    </div>
+  </div>
+
+  <!-- ===== QUICK NOTES MODAL ===== -->
+  <div class="qn-backdrop" id="quickNotesBackdrop">
+    <div class="qn-box">
+      <div class="qn-header">
+        <h2 class="qn-title"><span style="font-size:1.4rem;">📝</span> Quick Notes</h2>
+        <button class="qn-close" id="quickNotesCloseBtn" title="Close"><span class="material-icons" style="font-size:20px;pointer-events:none;">close</span></button>
+      </div>
+
+      <div class="qn-hint">
+        <span class="material-icons">save</span>
+        <span>Agr kuch mind me hai tu likh do, permanent save rahy ga Computer Restart k bad.</span>
+      </div>
+
+      <textarea class="qn-textarea" id="quickNoteInput" placeholder="Yahan apna note likhein..."></textarea>
+
+      <div class="qn-save-row">
+        <button class="qn-save-btn" id="quickNoteSaveBtn">
+          <span class="material-icons">add</span> Save Note
+        </button>
+      </div>
+
+      <div class="qn-list-label"><span class="material-icons">drag_indicator</span> Apne notes drag kar k reorder b kar sakte hain</div>
+      <div class="qn-list" id="quickNotesList"></div>
+    </div>
+  </div>
+
+  <div class="qn-toast" id="quickNotesToast"><span class="material-icons" style="font-size:16px;">check_circle</span><span id="quickNotesToastText">Saved!</span></div>
+
+  <!-- ===== NOTE EDIT MODAL ===== -->
+  <div class="qn-edit-backdrop" id="qnEditBackdrop">
+    <div class="qn-edit-box">
+      <div class="qn-edit-header">
+        <h2 class="qn-edit-title"><span style="font-size:1.3rem;">✏️</span> Note Edit Karein</h2>
+        <button class="qn-edit-close" id="qnEditCloseBtn" title="Close"><span class="material-icons" style="font-size:20px;pointer-events:none;">close</span></button>
+      </div>
+      <textarea class="qn-edit-textarea" id="qnEditTextarea" placeholder="Note yahan likhein..."></textarea>
+      <div class="qn-edit-footer">
+        <button class="qn-edit-cancel" id="qnEditCancelBtn">Cancel</button>
+        <button class="qn-edit-save" id="qnEditSaveBtn"><span class="material-icons">save</span> Save Changes</button>
+      </div>
     </div>
   </div>
 
@@ -1315,6 +1522,274 @@
       .catch(() => { /* API unavailable — keep using backup list */ });
 
     setInterval(showNext, 4000);
+  })();
+
+  // =====================================================================
+  // QUICK NOTES (popup + localStorage persistence)
+  // =====================================================================
+  (function() {
+    var STORAGE_KEY = 'onepilot_quick_notes';
+
+    function loadNotes() {
+      try {
+        var raw = localStorage.getItem(STORAGE_KEY);
+        var arr = raw ? JSON.parse(raw) : [];
+        return Array.isArray(arr) ? arr : [];
+      } catch (e) {
+        return [];
+      }
+    }
+
+    function persistNotes(notes) {
+      try {
+        localStorage.setItem(STORAGE_KEY, JSON.stringify(notes));
+      } catch (e) {
+        showToast('⚠️ Save fail ho gaya!');
+      }
+    }
+
+    var notes = loadNotes();
+
+    var backdrop   = document.getElementById('quickNotesBackdrop');
+    var openBtn    = document.getElementById('quickNotesOpenBtn');
+    var closeBtn   = document.getElementById('quickNotesCloseBtn');
+    var input      = document.getElementById('quickNoteInput');
+    var saveBtn    = document.getElementById('quickNoteSaveBtn');
+    var listEl     = document.getElementById('quickNotesList');
+    var toastEl    = document.getElementById('quickNotesToast');
+    var toastTextEl= document.getElementById('quickNotesToastText');
+
+    function escapeHtml(str) {
+      var d = document.createElement('div');
+      d.textContent = str;
+      return d.innerHTML;
+    }
+
+    function formatDate(ts) {
+      var d = new Date(ts);
+      var months = ['Jan','Feb','Mar','Apr','May','Jun','Jul','Aug','Sep','Oct','Nov','Dec'];
+      var h = d.getHours(), m = d.getMinutes();
+      var ampm = h >= 12 ? 'PM' : 'AM';
+      h = h % 12 || 12;
+      var mm = (m < 10 ? '0' : '') + m;
+      return months[d.getMonth()] + ' ' + d.getDate() + ', ' + d.getFullYear() + ', ' + h + ':' + mm + ' ' + ampm;
+    }
+
+    var toastTimer = null;
+    function showToast(msg) {
+      if (!toastEl) return;
+      toastTextEl.textContent = msg;
+      toastEl.classList.add('show');
+      clearTimeout(toastTimer);
+      toastTimer = setTimeout(function() { toastEl.classList.remove('show'); }, 1800);
+    }
+
+    function renderNotes() {
+      if (!listEl) return;
+      if (!notes.length) {
+        listEl.innerHTML = '<div class="qn-empty"><span class="material-icons">sticky_note_2</span>Abhi koi note save nahi hua. Pehla note upar likh kar Save karein 👆</div>';
+        return;
+      }
+      // Order = notes array order itself: purane notes pehle, newest sab se aakhir mein.
+      // User drag-drop se is order ko khud reorder kar sakta hai (saved permanently).
+      var html = '';
+      for (var i = 0; i < notes.length; i++) {
+        var n = notes[i];
+        var preview = escapeHtml(n.text);
+        html += '' +
+          '<div class="qn-card" data-id="' + n.id + '" draggable="true">' +
+            '<span class="qn-card-handle" title="Drag to reorder"><span class="material-icons">drag_indicator</span></span>' +
+            '<div class="qn-card-preview">' + preview + '</div>' +
+            '<div class="qn-card-footer">' +
+              '<span class="qn-card-date">' + formatDate(n.id) + '</span>' +
+              '<div class="qn-card-actions">' +
+                '<button class="qn-icon-btn qn-edit" title="Edit"><span class="material-icons">edit</span></button>' +
+                '<button class="qn-icon-btn qn-copy" title="Copy"><span class="material-icons">content_copy</span></button>' +
+                '<button class="qn-icon-btn qn-download" title="Download"><span class="material-icons">download</span></button>' +
+                '<button class="qn-icon-btn qn-del" title="Delete"><span class="material-icons">delete</span></button>' +
+              '</div>' +
+            '</div>' +
+          '</div>';
+      }
+      listEl.innerHTML = html;
+      attachDragHandlers();
+    }
+
+    var dragSrcId = null;
+
+    function attachDragHandlers() {
+      var cards = listEl.querySelectorAll('.qn-card');
+      cards.forEach(function(card) {
+        card.addEventListener('dragstart', function(e) {
+          dragSrcId = card.getAttribute('data-id');
+          card.classList.add('qn-dragging');
+          e.dataTransfer.effectAllowed = 'move';
+          try { e.dataTransfer.setData('text/plain', dragSrcId); } catch (err) {}
+        });
+        card.addEventListener('dragend', function() {
+          card.classList.remove('qn-dragging');
+          cards.forEach(function(c) { c.classList.remove('qn-drag-over'); });
+        });
+        card.addEventListener('dragover', function(e) {
+          e.preventDefault();
+          if (card.getAttribute('data-id') !== dragSrcId) card.classList.add('qn-drag-over');
+        });
+        card.addEventListener('dragleave', function() {
+          card.classList.remove('qn-drag-over');
+        });
+        card.addEventListener('drop', function(e) {
+          e.preventDefault();
+          card.classList.remove('qn-drag-over');
+          var targetId = card.getAttribute('data-id');
+          if (!dragSrcId || dragSrcId === targetId) return;
+          reorderNotes(dragSrcId, targetId);
+        });
+      });
+    }
+
+    function reorderNotes(srcId, targetId) {
+      var srcIdx = notes.findIndex(function(n) { return String(n.id) === String(srcId); });
+      var targetIdx = notes.findIndex(function(n) { return String(n.id) === String(targetId); });
+      if (srcIdx === -1 || targetIdx === -1) return;
+      var moved = notes.splice(srcIdx, 1)[0];
+      notes.splice(targetIdx, 0, moved);
+      persistNotes(notes);
+      renderNotes();
+      showToast('↕️ Order updated!');
+    }
+
+    function saveNote() {
+      var text = (input.value || '').trim();
+      if (!text) { input.focus(); return; }
+      notes.push({ id: Date.now(), text: text });
+      persistNotes(notes);
+      input.value = '';
+      renderNotes();
+      showToast('✅ Note saved!');
+      listEl.scrollTop = listEl.scrollHeight;
+    }
+
+    function deleteNote(id) {
+      notes = notes.filter(function(n) { return n.id !== id; });
+      persistNotes(notes);
+      renderNotes();
+      showToast('🗑️ Note deleted');
+    }
+
+    var editNoteId = null;
+    var qnEditBackdrop = document.getElementById('qnEditBackdrop');
+    var qnEditTextarea = document.getElementById('qnEditTextarea');
+    var qnEditCloseBtn = document.getElementById('qnEditCloseBtn');
+    var qnEditCancelBtn = document.getElementById('qnEditCancelBtn');
+    var qnEditSaveBtn = document.getElementById('qnEditSaveBtn');
+
+    function editNote(id) {
+      var n = notes.find(function(x) { return x.id === id; });
+      if (!n) return;
+      editNoteId = id;
+      qnEditTextarea.value = n.text;
+      qnEditBackdrop.classList.add('show');
+      setTimeout(function() { qnEditTextarea.focus(); qnEditTextarea.setSelectionRange(qnEditTextarea.value.length, qnEditTextarea.value.length); }, 60);
+    }
+
+    function closeEditModal() {
+      qnEditBackdrop.classList.remove('show');
+      editNoteId = null;
+    }
+
+    function saveEditedNote() {
+      if (!editNoteId) return;
+      var newText = (qnEditTextarea.value || '').trim();
+      if (!newText) { showToast('⚠️ Note khali nahi ho sakta!'); return; }
+      var n = notes.find(function(x) { return x.id === editNoteId; });
+      if (!n) return;
+      n.text = newText;
+      persistNotes(notes);
+      renderNotes();
+      closeEditModal();
+      showToast('✏️ Note updated!');
+    }
+
+    if (qnEditCloseBtn)  qnEditCloseBtn.addEventListener('click', closeEditModal);
+    if (qnEditCancelBtn) qnEditCancelBtn.addEventListener('click', closeEditModal);
+    if (qnEditSaveBtn)   qnEditSaveBtn.addEventListener('click', saveEditedNote);
+    if (qnEditBackdrop)  qnEditBackdrop.addEventListener('click', function(e) { if (e.target === qnEditBackdrop) closeEditModal(); });
+    if (qnEditTextarea)  qnEditTextarea.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) { e.preventDefault(); saveEditedNote(); }
+      if (e.key === 'Escape') closeEditModal();
+    });
+
+    function copyNote(id) {
+      var n = notes.find(function(x) { return x.id === id; });
+      if (!n) return;
+      var doCopy = function() {
+        showToast('📋 Copied!');
+      };
+      if (navigator.clipboard && navigator.clipboard.writeText) {
+        navigator.clipboard.writeText(n.text).then(doCopy).catch(doCopy);
+      } else {
+        var ta = document.createElement('textarea');
+        ta.value = n.text;
+        document.body.appendChild(ta);
+        ta.select();
+        try { document.execCommand('copy'); } catch (e) {}
+        document.body.removeChild(ta);
+        doCopy();
+      }
+    }
+
+    function downloadNote(id) {
+      var n = notes.find(function(x) { return x.id === id; });
+      if (!n) return;
+      var blob = new Blob([n.text], { type: 'text/plain' });
+      var url = URL.createObjectURL(blob);
+      var a = document.createElement('a');
+      a.href = url;
+      a.download = 'note-' + n.id + '.txt';
+      document.body.appendChild(a);
+      a.click();
+      document.body.removeChild(a);
+      URL.revokeObjectURL(url);
+      showToast('⬇️ Downloaded!');
+    }
+
+    function openModal() {
+      backdrop.classList.add('show');
+      renderNotes();
+      setTimeout(function() { input.focus(); }, 50);
+    }
+
+    function closeModal() {
+      backdrop.classList.remove('show');
+    }
+
+    if (openBtn)  openBtn.addEventListener('click', openModal);
+    if (closeBtn) closeBtn.addEventListener('click', closeModal);
+    if (backdrop) backdrop.addEventListener('click', function(e) {
+      if (e.target === backdrop) closeModal();
+    });
+    if (saveBtn)  saveBtn.addEventListener('click', saveNote);
+    if (input) input.addEventListener('keydown', function(e) {
+      if (e.key === 'Enter' && (e.ctrlKey || e.metaKey)) {
+        e.preventDefault();
+        saveNote();
+      }
+    });
+    document.addEventListener('keydown', function(e) {
+      if (e.key === 'Escape' && backdrop && backdrop.classList.contains('show')) closeModal();
+    });
+
+    if (listEl) listEl.addEventListener('click', function(e) {
+      var card = e.target.closest('.qn-card');
+      if (!card) return;
+      var id = parseInt(card.getAttribute('data-id'), 10);
+      if (e.target.closest('.qn-edit'))      editNote(id);
+      else if (e.target.closest('.qn-copy'))     copyNote(id);
+      else if (e.target.closest('.qn-download')) downloadNote(id);
+      else if (e.target.closest('.qn-del'))      deleteNote(id);
+    });
+
+    renderNotes();
   })();
 
   // =====================================================================
